@@ -18,7 +18,7 @@ Open `src/main/resources/application.properties` file and change the property `f
 file.upload-dir=/Users/mercator/hackathon/images
 ```
 
-**3. Change the mongoDb and ports in the *.property files.
+**3. Change the mongoDb and ports in the *.property files.**
 
 ```
 spring.data.mongodb.uri: mongodb://airline_user:123@localhost:27017/airline
@@ -30,14 +30,38 @@ server.port=8080
 ```bash
 ./mvnw clean packagRe -DskipTests
 ```
-**5. Run airline app
+
+**5. Database Creation
+In the mongo shell create dabases as below.
+
+```
+
+use airline;
+
+db.createUser({
+                user: 'airline_user',
+                pwd: '123',
+                roles: [{ role: 'readWrite', db:'airline'}]
+});
+
+use gha;
+
+db.createUser({
+                user: 'gha_user',
+                pwd: '123',
+                roles: [{ role: 'readWrite', db:'gha'}]
+});
+
+```
+
+**6. Run airline app **
 
 ```
    java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./airline.properties
 
 ```
 
-**6. run the gha app
+**7. run the gha app **
 
 java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./gha.properties
 

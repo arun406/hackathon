@@ -31,7 +31,7 @@ server.port=8080
 ./mvnw clean packagRe -DskipTests
 ```
 
-**5. Database Creation
+**5. Database Creation**
 In the mongo shell create dabases as below.
 
 ```
@@ -54,14 +54,14 @@ db.createUser({
 
 ```
 
-**6. Run airline app **
+**6. Run airline app**
 
 ```
    java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./airline.properties
 
 ```
 
-**7. run the gha app **
+**7. run the gha app**
 
 java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./gha.properties
 

@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties({
         FileStorageProperties.class
 })
-public class FileDemoApplication {
+public class Application {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -21,6 +21,6 @@ public class FileDemoApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(FileDemoApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

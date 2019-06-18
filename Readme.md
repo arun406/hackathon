@@ -19,6 +19,7 @@ file.upload-dir=/Users/mercator/hackathon/images
 ```
 
 **3. Change the mongoDb and ports in the *.property files.
+
 ```
 spring.data.mongodb.uri: mongodb://airline_user:123@localhost:27017/airline
 server.port=8080
@@ -27,10 +28,10 @@ server.port=8080
 **4. build the app using maven**
 
 ```bash
-
 ./mvnw clean packagRe -DskipTests
 ```
 **5. Run airline app
+
 ```
    java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./airline.properties
 

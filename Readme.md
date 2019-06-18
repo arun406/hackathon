@@ -1,6 +1,6 @@
 ## Spring Boot File Upload / Download Rest API Example
 
-**Tutorial**: [Uploading an Downloading files with Spring Boot](https://www.callicoder.com/spring-boot-file-upload-download-rest-api-example/)
+**Tutorial**: [])
 
 ## Steps to Setup
 
@@ -24,19 +24,19 @@ spring.data.mongodb.uri: mongodb://airline_user:123@localhost:27017/airline
 server.port=8080
 
 ```
-**4. Run the app using maven**
+**4. build the app using maven**
 
 ```bash
-build the app
+
 ./mvnw clean packagRe -DskipTests
 ```
-** 1. run airline app
+**5. Run airline app
 ```
    java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./airline.properties
 
 ```
 
-** 2. run the gha app
+**6. run the gha app
 
 java -jar hackathon-0.0.1-SNAPSHOT.jar -Dspring.config.location=./gha.properties
 

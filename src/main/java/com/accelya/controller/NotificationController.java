@@ -52,9 +52,11 @@ public class NotificationController {
                 ? node.get("subscriptionKey").textValue()
                 : null;
 
-        String loType = (node.get("@type") != null && node.get("@type").textValue() != null)
-                ? node.get("@type").textValue()
-                : null;
+        String loType = node.get("lo").get("type").textValue();
+
+//        String loType = (loNode.get("@type") != null && loNode.get("@type").textValue() != null)
+//                ? loNode.get("@type").textValue()
+//                : null;
         NotificationRequest<?> request = null;
 
         if ("AirwayBill".equalsIgnoreCase(loType)) {
@@ -97,7 +99,7 @@ public class NotificationController {
                 List<String> parties = new ArrayList<>();
                 parties.add(partyId);
 
-                NotificationRequest nr = new NotificationRequest(subscription.getKey(), parties, finalRequest.getLo());
+                NotificationRequest nr = new NotificationRequest(subscription.getSubscriptionEndpoint(), parties, finalRequest.getLo());
                 this.loService.publishLOToParty(nr);
             });
         });

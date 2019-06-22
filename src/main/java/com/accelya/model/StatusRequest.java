@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 public class StatusRequest {
 
-    private String id;
+
     private String key;
     private String companyId;
     private List<String> parties;

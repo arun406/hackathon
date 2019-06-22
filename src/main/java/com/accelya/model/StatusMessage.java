@@ -18,4 +18,6 @@ public class StatusMessage {
     private String message;
     private List<String> attachmentURI;
     private String timestamp;
+    private String id;
+    
 }

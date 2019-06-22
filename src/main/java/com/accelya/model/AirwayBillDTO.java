@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Document
 @Data
 @ToString
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
@@ -103,5 +105,5 @@ public class AirwayBillDTO {
 
     private List<String> documentList = new ArrayList<>();
 
-    private List<StatusMessage> updates;
+    private List<NotificationLO> updates = new ArrayList<>();
 }

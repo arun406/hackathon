@@ -9,6 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LOWrapper {
-    private MultipartFile image;
+    private MultipartFile file;
     private String lo; // AirwayBillDTO
 }

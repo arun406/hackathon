@@ -3,7 +3,7 @@ package com.accelya.services;
 import com.accelya.model.AirwayBillDTO;
 import com.accelya.model.BaseDTO;
 import com.accelya.model.NotificationRequest;
-import com.accelya.model.StatusMessage;
+import com.accelya.model.NotificationLO;
 import com.accelya.model.subscription.LOSubscriptionRequest;
 import com.accelya.repository.LORepository;
 import org.slf4j.Logger;
@@ -69,6 +69,11 @@ public class LOService<T> {
         repository.deleteByLoId(loId);
     }
 
+    /**
+     * @param airwayBillLO
+     * @param loId
+     * @return
+     */
     public BaseDTO<?> updateLO(BaseDTO<T> airwayBillLO, String loId) {
 
         airwayBillLO.setLoId(loId);
@@ -94,13 +99,14 @@ public class LOService<T> {
     }
 
     /**
-     * @param airwayBillDTO
+     *
+     * @param lo
      */
-    public void publishLOTOHub(BaseDTO<AirwayBillDTO> airwayBillDTO) {
+    public void publishLOTOHub(BaseDTO<AirwayBillDTO> lo) {
         List<String> parties = new ArrayList<>();
         parties.add(partyId);
 
-        NotificationRequest nr = new NotificationRequest(subscriptionKey, parties, airwayBillDTO);
+        NotificationRequest<?> nr = new NotificationRequest(subscriptionKey, parties, lo);
         HttpEntity<NotificationRequest> request = new HttpEntity<>(nr);
         this.restTemplate.postForObject(hubURI + "/" + companyId + "/los", request, String.class);
         this.logger.info(" Message published to Logistic Server Hub ");
@@ -112,7 +118,7 @@ public class LOService<T> {
      * @param loId
      * @param status
      */
-    public void addStatusToLo(String companyId, String loId, StatusMessage status) {
+    public void addStatusToLo(String companyId, String loId, NotificationLO status) {
         logger.info(" company Id {}, loId {}, status {}", companyId, loId, status);
 
         BaseDTO lo = getLO(companyId, loId);
@@ -127,17 +133,15 @@ public class LOService<T> {
     }
 
     /**
-     * @param lo
-     * @param subscriptionEndpoint
-     * @param key
+     *
+     * @param nr
      */
-    public void publishLOToParty(BaseDTO<AirwayBillDTO> lo, String subscriptionEndpoint, String key) {
-        List<String> parties = new ArrayList<>();
-        parties.add(partyId);
-        NotificationRequest nr = new NotificationRequest(key, parties, lo);
+    public void publishLOToParty(NotificationRequest<T> nr) {
+
         HttpEntity<NotificationRequest> request = new HttpEntity<>(nr);
-        this.restTemplate.postForObject(subscriptionEndpoint, request, String.class);
+        this.restTemplate.postForObject(nr.getKey(), request, String.class);
         this.logger.info(" Message published to Logistic Server Hub ");
 
     }
+
 }

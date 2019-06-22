@@ -10,16 +10,17 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @ToString
-public class NotificationRequest {
+public class NotificationRequest<T> {
 
     @JsonProperty("subscriptionKey")
     private String key;
-    private List<String> parties; // companyId
-    private BaseDTO<AirwayBillDTO> lo;
+    private List<String> parties; // companyId who can access this object
+    private T lo;   // can be a AirwayBillDTO or NotificationLO logistic objects/
 
-    public NotificationRequest(String key, List<String> parties, BaseDTO<AirwayBillDTO> lo) {
+    public NotificationRequest(String key, List<String> parties, T lo) {
         this.key = key;
         this.parties = parties;
         this.lo = lo;
     }
+
 }

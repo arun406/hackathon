@@ -1,16 +1,22 @@
 package com.accelya.controller;
 
 import com.accelya.model.AirwayBillDTO;
+import com.accelya.model.BaseDTO;
 import com.accelya.model.NotificationRequest;
-import com.accelya.model.StatusMessage;
-import com.accelya.model.StatusRequest;
+import com.accelya.model.NotificationLO;
 import com.accelya.services.LOService;
 import com.accelya.services.SubscriptionService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -19,7 +25,7 @@ public class NotificationController {
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     private Map<String, List<AirwayBillDTO>> loStore = new HashMap<>();
-    private Map<String, List<StatusMessage>> statusUpdateStore = new HashMap<>();
+    private Map<String, List<NotificationLO>> statusUpdateStore = new HashMap<>();
 
     @Autowired
     private SubscriptionService subscriptionsService;
@@ -27,35 +33,72 @@ public class NotificationController {
     @Autowired
     private LOService<AirwayBillDTO> loService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
     /**
      * Will receive the LO from Airline
      */
 
     @PostMapping("/{companyId}/los")
     @ResponseBody
-    public void storeLogisticeObjectsFromParties(@PathVariable String companyId, @RequestBody NotificationRequest message) {
+    public void storeLogisticeObjectsFromParties(@PathVariable String companyId, @RequestBody String message) throws IOException {
 
         logger.info(" Incoming Message: {} , companyId {} ", message, companyId);
+        JsonNode node = objectMapper.readTree(message);
 
-        if (!loStore.containsKey(companyId)) {
-            List messages = new ArrayList();
-            messages.add(message.getLo());
-            loStore.put(companyId, messages);
-        } else {
-            List messages = loStore.get(companyId);
-            messages.add(message.getLo());
-            loStore.put(companyId, messages);
+        String subscriptionKeyInRequest = (node.get("subscriptionKey") != null && node.get("subscriptionKey").textValue() != null)
+                ? node.get("subscriptionKey").textValue()
+                : null;
+
+        String loType = (node.get("@type") != null && node.get("@type").textValue() != null)
+                ? node.get("@type").textValue()
+                : null;
+        NotificationRequest<?> request = null;
+
+        if ("AirwayBill".equalsIgnoreCase(loType)) {
+
+            request = objectMapper
+                    .readValue(message, new TypeReference<NotificationRequest<BaseDTO<AirwayBillDTO>>>() {
+                    });
+
+
+        } else if ("Notification".equalsIgnoreCase(loType)) {
+            request = objectMapper
+                    .readValue(message, new TypeReference<NotificationRequest<NotificationLO>>() {
+                    });
+
+            logger.info(" Received LO Notification : " + request);
+
         }
+        // Get the
+//        if (!loStore.containsKey(companyId)) {
+//            List messages = new ArrayList();
+//            messages.add(request.getLo());
+//            loStore.put(companyId, messages);
+//        } else {
+//            List messages = loStore.get(companyId);
+//            messages.add(request.getLo());
+//            loStore.put(companyId, messages);
+//        }
 
         // Notified Parties.
 
         logger.info(" Allowed Parties...");
-        message.getParties().forEach(s -> {
-            this.logger.info(" Party Company Id: " + s);
-            this.subscriptionsService.getAll(s).forEach(subscription -> {
+        NotificationRequest<?> finalRequest = request;
+
+        request.getParties().forEach(partyId -> {
+            this.logger.info(" Party Company Id: " + partyId);
+            this.subscriptionsService.getAll(partyId).forEach(subscription -> {
                 this.logger.info(" Subscription End point:  {}, Key :  {}",
                         subscription.getSubscriptionEndpoint(), subscription.getKey());
-                    this.loService.publishLOToParty(message.getLo(), subscription.getSubscriptionEndpoint(), subscription.getKey());
+
+                List<String> parties = new ArrayList<>();
+                parties.add(partyId);
+
+                NotificationRequest nr = new NotificationRequest(subscription.getKey(), parties, finalRequest.getLo());
+                this.loService.publishLOToParty(nr);
             });
         });
 
@@ -87,9 +130,10 @@ public class NotificationController {
     }
 
 
-    @PostMapping("/{companyId}/los/{loId}")
+    /*@PostMapping("/{companyId}/los/{loId}")
     @ResponseBody
-    public void storeLogisticStatus(@PathVariable String companyId, @PathVariable String loId, StatusRequest message) {
+    public void storeLogisticStatus(@PathVariable String companyId, @PathVariable String
+            loId, LONotificationRequest message) {
         logger.info(" Incoming Message: " + message);
         String key = companyId + "#" + loId;
 
@@ -110,7 +154,7 @@ public class NotificationController {
 
 
         logger.info(" StatusMessages inserted to Store.... ");
-    }
+    }*/
 
 
 }

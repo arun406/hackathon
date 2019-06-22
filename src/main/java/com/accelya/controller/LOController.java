@@ -72,7 +72,7 @@ public class LOController {
             if (model.getFile() != null) {
                 String fileName = this.fileStorageService.storeFile(model.getFile());
                 fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path(id)
+                        .path(id +"/")
                         .path(fileName)
                         .toUriString();
             }

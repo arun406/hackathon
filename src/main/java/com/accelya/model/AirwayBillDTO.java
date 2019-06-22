@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -100,7 +101,7 @@ public class AirwayBillDTO {
 
     private String TotalChargeAmount;
 
-    private List<String> documentList;
+    private List<String> documentList = new ArrayList<>();
 
     private List<StatusMessage> updates;
 }

@@ -3,8 +3,10 @@ package com.accelya.controller;
 
 import com.accelya.model.AirwayBillDTO;
 import com.accelya.model.BaseDTO;
+import com.accelya.model.LOWrapper;
 import com.accelya.model.StatusMessage;
 import com.accelya.services.LOService;
+import com.example.filedemo.service.FileStorageService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -34,13 +36,18 @@ public class LOController {
     @Autowired
     private LOService<AirwayBillDTO> service;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
 
     @PostMapping("/companies/{companyId}/los")
     @ResponseBody
-    public BaseDTO<?> createLO(@PathVariable("companyId") String companyId, @RequestBody String lo) {
+    public BaseDTO<?> createLO(@PathVariable("companyId") String companyId, @ModelAttribute LOWrapper model) {
+
         this.baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
 
         try {
+            String lo = model.getLo();
             JsonNode node = objectMapper.readTree(lo);
 
             String type = (node.get("@type") != null && node.get("@type").textValue() != null) ? node.get("@type").textValue() : null;
@@ -55,11 +62,24 @@ public class LOController {
                 BaseDTO<AirwayBillDTO> airwayBillLO = new BaseDTO<>(airwayBillDTO, type, url, companyId, id);
                 airwayBillLO.setCreatedAt(new GregorianCalendar());
 
+                // Save the attachments
+                if(model.getImage() != null) {
+                    String fileName = this.fileStorageService.storeFile(model.getImage());
+                    String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/downloadFile/")
+                            .path(fileName)
+                            .toUriString();
+
+                    airwayBillDTO.getDocumentList().add(fileDownloadUri);
+
+                }
                 // Save LO into DB
                 BaseDTO<AirwayBillDTO> responseLO = service.createLO(airwayBillLO);
 
                 service.publishLOTOHub(responseLO);
 //                service.publish(airwayBillLO);
+
+
 
                 // Send Notification to WhatsApp. TODO
 

@@ -52,7 +52,7 @@ public class FileController {
     }
 
     @GetMapping("/{id}/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String loId, @PathVariable String fileName, HttpServletRequest request) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String id, @PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 

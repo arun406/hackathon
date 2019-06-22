@@ -40,7 +40,7 @@ public class LOController {
     private FileStorageService fileStorageService;
 
 
-    @PostMapping("/companies/{companyId}/los")
+    @PostMapping(value = "/companies/{companyId}/los", consumes = {"multipart/form-data"})
     @ResponseBody
     public BaseDTO<?> createLO(@PathVariable("companyId") String companyId, @ModelAttribute LOWrapper model) {
 
@@ -66,7 +66,7 @@ public class LOController {
                 if(model.getImage() != null) {
                     String fileName = this.fileStorageService.storeFile(model.getImage());
                     String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                            .path("/downloadFile/")
+                            .path(id)
                             .path(fileName)
                             .toUriString();
 

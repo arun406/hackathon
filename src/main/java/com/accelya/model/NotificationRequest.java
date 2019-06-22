@@ -1,5 +1,6 @@
 package com.accelya.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import java.util.List;
 @ToString
 public class NotificationRequest {
 
+    @JsonProperty("subscriptionKey")
     private String key;
     private List<String> parties; // companyId
     private BaseDTO<AirwayBillDTO> lo;

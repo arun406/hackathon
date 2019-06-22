@@ -35,8 +35,8 @@ public class LOService<T> {
     @Value("${app.companyId}")
     private String companyId;
 
-    @Value("${app.key}")
-    private String key;
+    @Value("${app.subscriptionKey}")
+    private String subscriptionKey;
 
     @Value("${app.partyId}")
     private String partyId;
@@ -100,7 +100,7 @@ public class LOService<T> {
         List<String> parties = new ArrayList<>();
         parties.add(partyId);
 
-        NotificationRequest nr = new NotificationRequest(key, parties, airwayBillDTO);
+        NotificationRequest nr = new NotificationRequest(subscriptionKey, parties, airwayBillDTO);
         HttpEntity<NotificationRequest> request = new HttpEntity<>(nr);
         this.restTemplate.postForObject(hubURI + "/" + companyId + "/los", request, String.class);
         this.logger.info(" Message published to Logistic Server Hub ");

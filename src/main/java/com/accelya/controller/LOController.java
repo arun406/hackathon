@@ -3,6 +3,7 @@ package com.accelya.controller;
 
 import com.accelya.model.AirwayBillDTO;
 import com.accelya.model.BaseDTO;
+import com.accelya.model.StatusMessage;
 import com.accelya.services.LOService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,8 @@ import java.util.UUID;
 public class LOController {
 
     private static final Logger logger = LoggerFactory.getLogger(LOController.class);
+
+    public static final String AIRWAY_BILL = "AirwayBill";
 
 
     @Autowired
@@ -42,19 +45,23 @@ public class LOController {
 
             String type = (node.get("@type") != null && node.get("@type").textValue() != null) ? node.get("@type").textValue() : null;
             String id = (node.get("@id") != null && node.get("@id").textValue() != null) ? node.get("@id").textValue() : UUID.randomUUID().toString();
-            String url = (node.get("@url") != null && node.get("@url").textValue() != null) ? node.get("@url").textValue() : (baseUrl + "/" + companyId + "/" + id);
+            String url = (node.get("@url") != null && node.get("@url").textValue() != null) ? node.get("@url").textValue() : (baseUrl + "/" + id);
 
             if ("AirwayBill".equalsIgnoreCase(type)) {
 
                 AirwayBillDTO airwayBillDTO = objectMapper.readValue(lo, AirwayBillDTO.class);
                 airwayBillDTO.setId(id);
+                airwayBillDTO.setUrl(url);
                 BaseDTO<AirwayBillDTO> airwayBillLO = new BaseDTO<>(airwayBillDTO, type, url, companyId, id);
                 airwayBillLO.setCreatedAt(new GregorianCalendar());
 
-                // Save LO
+                // Save LO into DB
                 BaseDTO<AirwayBillDTO> responseLO = service.createLO(airwayBillLO);
 
-                service.publish(airwayBillLO);
+                service.publishLOTOHub(responseLO);
+//                service.publish(airwayBillLO);
+
+                // Send Notification to WhatsApp. TODO
 
                 return responseLO;
             }
@@ -77,6 +84,13 @@ public class LOController {
         return service.getLO(companyId, loId);
     }
 
+    @GetMapping("/{loId}")
+    @ResponseBody
+    public BaseDTO getLO(@PathVariable("loId") String loId) {
+        return service.getLO(null, loId);
+    }
+
+
     @DeleteMapping("/companies/{companyId}/los/{loId}")
     @ResponseBody
     public void deleteLO(@PathVariable("companyId") String companyId, @PathVariable("loId") String loId) {
@@ -96,7 +110,7 @@ public class LOController {
             String id = node.get("@id") != null ? node.get("@id").textValue() : UUID.randomUUID().toString();
             String url = node.get("@url") != null ? node.get("@url").textValue() : (baseUrl + "/" + companyId + "/" + id);
 
-            if ("AirwayBill".equalsIgnoreCase(type)) {
+            if (AIRWAY_BILL.equalsIgnoreCase(type)) {
 
                 AirwayBillDTO airwayBillDTO = objectMapper.readValue(lo, AirwayBillDTO.class);
                 BaseDTO<AirwayBillDTO> airwayBillLO = new BaseDTO<>(airwayBillDTO, type, url, companyId, id);
@@ -109,5 +123,13 @@ public class LOController {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    @PostMapping("/companies/{companyId}/los/{loId}/status")
+    @ResponseBody
+    public void createStatus(@PathVariable String companyId, @PathVariable String loId, @RequestBody StatusMessage status) {
+        this.service.addStatusToLo(companyId, loId, status);
+
     }
 }

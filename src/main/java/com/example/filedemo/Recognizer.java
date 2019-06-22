@@ -1,5 +1,6 @@
 package com.example.filedemo;
 
+import org.springframework.stereotype.Component;
 import org.tensorflow.*;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class Recognizer {
 
     private static byte[] graphDef;

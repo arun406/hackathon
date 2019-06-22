@@ -40,21 +40,25 @@ public class LOSubscriptionController {
     public ResponseEntity<?> receiveLO(@RequestBody String subscribedLORequest) {
 
         JsonNode node = null;
+
         try {
             node = objectMapper.readTree(subscribedLORequest);
-            String subscriptionKeyInRequest = (node.get("subscriptionKey") != null && node.get("subscriptionKey").textValue() != null) ? node.get("subscriptionKey").textValue() : null;
+            String subscriptionKeyInRequest = (node.get("subscriptionKey") != null && node.get("subscriptionKey").textValue() != null)
+                    ? node.get("subscriptionKey").textValue()
+                    : null;
 
             if (subscriptionKeyInRequest == null || !subscriptionKeyInRequest.equals(subscriptionKey)) {
                 return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
             }
 
-            LOSubscriptionRequest<BaseDTO<AirwayBillDTO>> airwayBillLO = objectMapper.readValue(subscribedLORequest, new TypeReference<LOSubscriptionRequest<BaseDTO<AirwayBillDTO>>>() {
-            });
+            LOSubscriptionRequest<BaseDTO<AirwayBillDTO>> airwayBillLO = objectMapper
+                    .readValue(subscribedLORequest, new TypeReference<LOSubscriptionRequest<BaseDTO<AirwayBillDTO>>>() {
+                    });
 
             logger.info(" Receive LO: " + airwayBillLO.getLo());
 
-            // Save LO
-            BaseDTO<AirwayBillDTO> responseLO = service.createLO(airwayBillLO.getLo());
+            // LO will be saved to GHA database. And flow completes Here.
+            service.createLO(airwayBillLO.getLo());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,4 +66,5 @@ public class LOSubscriptionController {
 
         return new ResponseEntity<>(new LOSubscriptionResponse("Logistics object notification successful!"), HttpStatus.OK);
     }
+
 }

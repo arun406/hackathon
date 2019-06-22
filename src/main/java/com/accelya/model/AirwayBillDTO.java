@@ -100,4 +100,7 @@ public class AirwayBillDTO {
 
     private String TotalChargeAmount;
 
+    private List<String> documentList;
+
+    private List<StatusMessage> updates;
 }

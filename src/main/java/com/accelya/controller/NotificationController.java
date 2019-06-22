@@ -99,8 +99,8 @@ public class NotificationController {
                 List<String> parties = new ArrayList<>();
                 parties.add(partyId);
 
-                NotificationRequest nr = new NotificationRequest(subscription.getSubscriptionEndpoint(), parties, finalRequest.getLo());
-                this.loService.publishLOToParty(nr);
+                NotificationRequest nr = new NotificationRequest(subscription.getKey(), parties, finalRequest.getLo());
+                this.loService.publishLOToParty(nr,subscription.getSubscriptionEndpoint());
             });
         });
 

@@ -136,10 +136,10 @@ public class LOService<T> {
      *
      * @param nr
      */
-    public void publishLOToParty(NotificationRequest<T> nr) {
+    public void publishLOToParty(NotificationRequest<T> nr, String subscriptionEndPoint) {
 
         HttpEntity<NotificationRequest> request = new HttpEntity<>(nr);
-        this.restTemplate.postForObject(nr.getKey(), request, String.class);
+        this.restTemplate.postForObject(subscriptionEndPoint, request, String.class);
         this.logger.info(" Message published to Logistic Server Hub ");
 
     }

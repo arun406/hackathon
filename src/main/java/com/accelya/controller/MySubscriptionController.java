@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -51,6 +52,12 @@ public class MySubscriptionController {
             String loType = (node.get("@type") != null && node.get("@type").textValue() != null)
                     ? node.get("@type").textValue()
                     : null;
+
+            if(StringUtils.isEmpty(loType)) {
+                if(node.get("lo") != null ){
+                    loType =  node.get("lo").get("@type").textValue();
+                }
+            }
 
             if (subscriptionKeyInRequest == null || !subscriptionKeyInRequest.equals(subscriptionKey)) {
                 return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);

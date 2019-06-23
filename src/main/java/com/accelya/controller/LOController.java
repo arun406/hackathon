@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -64,6 +65,12 @@ public class LOController {
             JsonNode node = objectMapper.readTree(loText);
 
             String type = (node.get("@type") != null && node.get("@type").textValue() != null) ? node.get("@type").textValue() : null;
+
+
+            if(StringUtils.isEmpty(type)){
+                type = (node.get("type") != null && node.get("type").textValue() != null) ? node.get("type").textValue() : null;
+            }
+
             String id = (node.get("@id") != null && node.get("@id").textValue() != null) ? node.get("@id").textValue() : UUID.randomUUID().toString();
             String url = (node.get("@url") != null && node.get("@url").textValue() != null) ? node.get("@url").textValue() : (baseUrl + "/" + id);
 
@@ -108,6 +115,9 @@ public class LOController {
                 // save and push to HUB
                 notificationLOService.publishLOTOHub(notificationLO);
 
+                whatsAppService.sendWhatsAppMessage(notificationLO.getText(), "917045500062");
+                whatsAppService.sendWhatsAppMessage(notificationLO.getText(), "971529773913");
+//                whatsAppService.sendWhatsAppMessage(notificationLO.getText(), airwayBillDTO.);
                 return new ResponseEntity<>(responseLO, HttpStatus.OK);
 
             }

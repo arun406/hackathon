@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -51,8 +52,13 @@ public class NotificationController {
         String subscriptionKeyInRequest = (node.get("subscriptionKey") != null && node.get("subscriptionKey").textValue() != null)
                 ? node.get("subscriptionKey").textValue()
                 : null;
-
-        String loType = node.get("lo").get("type").textValue();
+        String loType ;
+        JsonNode loTypeNode = node.get("lo").get("type");
+        if(loTypeNode != null){
+            loType = loTypeNode.textValue();
+        }else {
+            loType = node.get("lo").get("@type").textValue();
+        }
 
 //        String loType = (loNode.get("@type") != null && loNode.get("@type").textValue() != null)
 //                ? loNode.get("@type").textValue()

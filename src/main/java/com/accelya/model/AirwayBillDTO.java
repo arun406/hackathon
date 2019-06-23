@@ -16,6 +16,22 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
 public class AirwayBillDTO {
 
+
+    private Pet pet;
+
+    private int pieces;
+
+    private Value weight;
+
+    private boolean isCreateAvailable;
+    private String createType;
+    private Value createWeight;
+    private Dimension dimensions;
+
+    private Flight flight;
+
+    private Services services;
+
     @JsonProperty("@context")
     private Context context;
 

@@ -91,7 +91,7 @@ public class FileController {
 
 
         return new ImageFileResponse(fileName, fileDownloadUri,
-                file.getContentType(), file.getSize(), Recognizer.getBread(fileName));
+                file.getContentType(), file.getSize(), new Recognizer().getBread(fileName));
     }
 
 

@@ -92,7 +92,7 @@ public class LOController {
                 service.publishLOTOHub(responseLO);
 
                 /* Send Notification to shipper WhatsApp configured number. */
-                String message = constructShipperWhatsAppMessage(airwayBillDTO.getShipper(), "Buddy", "AA 6132 LHR - JFK");
+                String message = constructShipperWhatsAppMessage(airwayBillDTO.getShipper(), airwayBillDTO.getPet().getName(), "AA 6132 LHR - JFK");
                 whatsAppService.sendWhatsAppMessage(message, shipperPhoneNumber);
 
                 return new ResponseEntity<>(responseLO, HttpStatus.OK);

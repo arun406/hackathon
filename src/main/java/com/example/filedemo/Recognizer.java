@@ -1,5 +1,6 @@
 package com.example.filedemo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tensorflow.*;
 
@@ -14,6 +15,12 @@ import java.util.List;
 @Component
 public class Recognizer {
 
+    @Value("${file.inception.path}")
+    private static String incepectionPath;
+
+    @Value("${file.upload-dir}")
+    private static String imageUploadPath;
+
     private static byte[] graphDef;
     private static List<String> labels;
 
@@ -22,8 +29,10 @@ public class Recognizer {
     }
 
     public static String getBread(String imageName) {
-        String modelpath = "/Users/mercator/hackathon/inception_dec_2015";
-        byte[] imageBytes = readAllBytesOrExit(Paths.get("/Users/mercator/hackathon/images/" + imageName));
+
+        System.out.print("Inception Path: ");
+        String modelpath = incepectionPath;
+        byte[] imageBytes = readAllBytesOrExit(Paths.get(imageUploadPath +"/" + imageName));
 
         try (Tensor image = Tensor.create(imageBytes)) {
             graphDef = readAllBytesOrExit(Paths.get(modelpath, "tensorflow_inception_graph.pb"));

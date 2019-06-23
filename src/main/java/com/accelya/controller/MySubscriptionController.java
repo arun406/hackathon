@@ -55,7 +55,11 @@ public class MySubscriptionController {
 
             if(StringUtils.isEmpty(loType)) {
                 if(node.get("lo") != null ){
-                    loType =  node.get("lo").get("@type").textValue();
+                    if(node.get("lo").get("@type") != null)
+                        loType = node.get("lo").get("@type") .textValue();
+                    else {
+                        loType = node.get("lo").get("type") .textValue();
+                    }
                 }
             }
 

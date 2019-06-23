@@ -116,7 +116,10 @@ public class LOController {
                 notificationLOService.publishLOTOHub(notificationLO);
 
                 whatsAppService.sendWhatsAppMessage(notificationLO.getText(), "917045500062");
+
+                sendWhatsAppQRCode(notificationLO, "917045500062");
                 whatsAppService.sendWhatsAppMessage(notificationLO.getText(), "971529773913");
+                sendWhatsAppQRCode(notificationLO, "971529773913");
 //                whatsAppService.sendWhatsAppMessage(notificationLO.getText(), airwayBillDTO.);
                 return new ResponseEntity<>(responseLO, HttpStatus.OK);
 
@@ -208,6 +211,18 @@ public class LOController {
     @ResponseBody
     public void createStatus(@PathVariable String companyId, @PathVariable String loId, @RequestBody NotificationLO status) {
         this.service.addStatusToLo(companyId, loId, status);
+
+    }
+
+    private void sendWhatsAppQRCode(NotificationLO notificationLO, String phoneNumber) {
+
+        if(notificationLO.getCode().equals("BKGCFM") || notificationLO.getCode().equals("TENDER")) {
+
+            StringBuilder sb = new StringBuilder("http://localhost:4200/track/");
+            sb.append(notificationLO.getLoId());
+
+            whatsAppService.sendWhatsAppQRCode(sb.toString(), phoneNumber);
+        }
 
     }
 }
